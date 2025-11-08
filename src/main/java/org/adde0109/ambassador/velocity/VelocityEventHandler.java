@@ -3,6 +3,7 @@ package org.adde0109.ambassador.velocity;
 import com.velocitypowered.api.event.Continuation;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.*;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
@@ -68,9 +69,13 @@ public class VelocityEventHandler {
     if (!(player.getConnection().getType() instanceof ForgeFMLConnectionType)) {
       return;
     }
+    // Do not overwrite the mod info stored by the proxy or the server redirect based on Client Reset Packet will stop working
+    /*
     player.setModInfo(new ModInfo("Channels", event.getChannels().stream().map((id) -> {
       return new ModInfo.Mod(id.getId(), "");
     }).toList()));
+    */
+    Ambassador.getInstance().getPlayerRegisteredChannels(player.getUsername()).addAll(event.getChannels());
 
     VelocityForgeClientConnectionPhase clientPhase = (VelocityForgeClientConnectionPhase) player.getPhase();
     //If reset typ is still unknown, set it!
@@ -79,4 +84,10 @@ public class VelocityEventHandler {
     }
   }
 
+  // fixme remove unregistered channels when player channel unregister event is fired (that event does not exist?!)
+
+  @Subscribe
+  public void onPlayerDisconnectEvent(DisconnectEvent event) {
+    Ambassador.getInstance().removePlayerRegisteredChannels(event.getPlayer().getUsername());
+  }
 }

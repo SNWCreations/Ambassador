@@ -1,5 +1,7 @@
 package org.adde0109.ambassador;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
@@ -14,8 +16,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.velocitypowered.api.proxy.messages.ChannelIdentifier;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import com.velocitypowered.proxy.VelocityServer;
 import com.velocitypowered.proxy.connection.MinecraftConnection;
@@ -60,6 +64,15 @@ public class Ambassador {
   public AmbassadorConfig config;
 
   private static final MapWithExpiration<String, RegisteredServer> TEMPORARY_FORCED = new MapWithExpiration<>();
+  private static final ListMultimap<String, ChannelIdentifier> PLAYER_REGISTERED_CHANNELS = ArrayListMultimap.create();
+
+  public List<ChannelIdentifier> getPlayerRegisteredChannels(String username) {
+    return PLAYER_REGISTERED_CHANNELS.get(username);
+  }
+
+  public void removePlayerRegisteredChannels(String username) {
+    PLAYER_REGISTERED_CHANNELS.removeAll(username);
+  }
 
   private static Ambassador instance;
   public static Ambassador getInstance() {
