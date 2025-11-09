@@ -75,19 +75,11 @@ public class VelocityEventHandler {
       return new ModInfo.Mod(id.getId(), "");
     }).toList()));
     */
-    Ambassador.getInstance().getPlayerRegisteredChannels(player.getUsername()).addAll(event.getChannels());
 
     VelocityForgeClientConnectionPhase clientPhase = (VelocityForgeClientConnectionPhase) player.getPhase();
     //If reset typ is still unknown, set it!
     if (clientPhase.getResetType() == VelocityForgeClientConnectionPhase.ClientResetType.UNKNOWN) {
       clientPhase.updateResetType(player);
     }
-  }
-
-  // fixme remove unregistered channels when player channel unregister event is fired (that event does not exist?!)
-
-  @Subscribe
-  public void onPlayerDisconnectEvent(DisconnectEvent event) {
-    Ambassador.getInstance().removePlayerRegisteredChannels(event.getPlayer().getUsername());
   }
 }

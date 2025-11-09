@@ -54,7 +54,7 @@ import static com.velocitypowered.proxy.protocol.packet.brigadier.ArgumentIdenti
 public class Ambassador {
 
   //Don't forget to update checkCompatibleVersion() when changing this value
-  private static final String minVelocityVersion = "velocity-3.3.0-SNAPSHOT-330";
+  private static final String minVelocityVersion = "velocity-3.3.0-SNAPSHOT-490";
 
   public ProxyServer server;
   public final Logger logger;
@@ -64,15 +64,6 @@ public class Ambassador {
   public AmbassadorConfig config;
 
   private static final MapWithExpiration<String, RegisteredServer> TEMPORARY_FORCED = new MapWithExpiration<>();
-  private static final ListMultimap<String, ChannelIdentifier> PLAYER_REGISTERED_CHANNELS = ArrayListMultimap.create();
-
-  public List<ChannelIdentifier> getPlayerRegisteredChannels(String username) {
-    return PLAYER_REGISTERED_CHANNELS.get(username);
-  }
-
-  public void removePlayerRegisteredChannels(String username) {
-    PLAYER_REGISTERED_CHANNELS.removeAll(username);
-  }
 
   private static Ambassador instance;
   public static Ambassador getInstance() {
@@ -92,11 +83,11 @@ public class Ambassador {
   boolean checkCompatibleVersion() {
     //Update this when changing minVelocityVersion
     try {
-      Class.forName("com.velocitypowered.proxy.protocol.packet.DisconnectPacket");
-    } catch (ClassNotFoundException e) {
-        throw new RuntimeException(e);
+      ConnectedPlayer.class.getMethod("getClientsideChannels");
+    } catch (NoSuchMethodException e) {
+      return false;
     }
-      return true;
+    return true;
   }
 
   @Subscribe(order = PostOrder.LAST)

@@ -199,7 +199,7 @@ public enum VelocityForgeClientConnectionPhase implements ClientConnectionPhase 
         return ClientResetType.CRP;
       } else if (Ambassador.getInstance().config.getServerSwitchCancellationTime() >= 0 &&
               (player.getModInfo().get().getMods().stream().anyMatch((mod -> mod.getId().equals("serverredirect")))
-              || Ambassador.getInstance().getPlayerRegisteredChannels(player.getUsername()).stream().anyMatch(identifier -> identifier.getId().equals("srvredirect:red")))
+              || player.getClientsideChannels().stream().anyMatch(identifier -> identifier.getId().equals("srvredirect:red")))
               && player.getVirtualHost().isPresent()) {
         return ClientResetType.SR;
       }
